@@ -31,14 +31,20 @@ class Task2:
     def calculate(self):
         self.error_label.config(text='')
         try:
+            count = 100_000
+
             probabilities = [float(x) for x in self.probabilities_input.get().replace(' ', '').split(',')]
             if any(p < 0 or p > 1 for p in probabilities):
                 raise Exception("Probability values should be between 0 and 1")
 
             output = []
             for probability in probabilities:
-                print('asd')
-                output.append([probability, simulate_event(probability)])
+                success = 0
+                for i in range(0, count):
+                    if simulate_event(probability):
+                        success += 1
+
+                output.append([probability, success / count])
 
             self.result_label.config(
                 text='\n'.join([' '.join(map(str, item)) for item in output]))

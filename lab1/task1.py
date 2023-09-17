@@ -31,13 +31,20 @@ class Task1:
     def calculate(self):
         self.error_label.config(text='')
         try:
-            probability = float(self.probability_input.get())
+            count = 1_000_000
 
+            probability = float(self.probability_input.get())
             if probability > 1 or probability < 0:
                 raise Exception('Probability should be from 0 to 1')
 
+            success = 0
+            for i in range(0, count):
+                if simulate_event(probability):
+                    success += 1
+
+            result = success / count
             self.result_label.config(
-                text=f'Result: {simulate_event(probability)}')
+                text=f'Result:\nP(A): {result}\nP(!A): {1 - result}')
 
         except ValueError:
             self.error_label.config(text='Invalid value')
