@@ -10,8 +10,8 @@ class Task1:
         self.frame = ttk.Frame(self.parent)
         self.frame.grid(row=1, column=0)
 
-        self.info_label = ttk.Label(self.frame, text='Insert event probability (from 0 to 1)')
-        self.info_label.grid(row=0, column=0)
+        info_label = ttk.Label(self.frame, text='Insert event probability (from 0 to 1)')
+        info_label.grid(row=0, column=0)
 
         self.probability_input = ttk.Entry(self.frame)
         self.probability_input.grid(row=1, column=0)

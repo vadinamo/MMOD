@@ -10,14 +10,14 @@ class Task3:
         self.frame = ttk.Frame(self.parent)
         self.frame.grid(row=1, column=0)
 
-        self.a_info_label = ttk.Label(self.frame, text='Insert P(A) probability')
-        self.a_info_label.grid(row=0, column=0)
+        a_info_label = ttk.Label(self.frame, text='Insert P(A) probability')
+        a_info_label.grid(row=0, column=0)
 
         self.a_probability_input = ttk.Entry(self.frame)
         self.a_probability_input.grid(row=1, column=0)
 
-        self.ba_info_label = ttk.Label(self.frame, text='Insert P(B|A) probability')
-        self.ba_info_label.grid(row=2, column=0)
+        ba_info_label = ttk.Label(self.frame, text='Insert P(B|A) probability')
+        ba_info_label.grid(row=2, column=0)
 
         self.ba_probability_input = ttk.Entry(self.frame)
         self.ba_probability_input.grid(row=3, column=0)

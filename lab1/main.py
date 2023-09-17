@@ -1,10 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 
-from task1 import Task1
-from task2 import Task2
-from task3 import Task3
-from task4 import Task4
+from tasks.task1 import Task1
+from tasks.task2 import Task2
+from tasks.task3 import Task3
+from tasks.task4 import Task4
+from tasks.task_additional import AdditionalTask
 
 
 def main():
@@ -21,6 +22,8 @@ def main():
     task3.draw()
     task4 = Task4(tab_control)
     task4.draw()
+    additional_task = AdditionalTask(tab_control)
+    additional_task.draw()
 
     tab_control.pack(expand=1, fill="both")
 

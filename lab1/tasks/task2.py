@@ -10,8 +10,8 @@ class Task2:
         self.frame = ttk.Frame(self.parent)
         self.frame.grid(row=1, column=0)
 
-        self.info_label = ttk.Label(self.frame, text='Insert events probabilities separated by ","')
-        self.info_label.grid(row=0, column=0)
+        info_label = ttk.Label(self.frame, text='Insert events probabilities separated by ","')
+        info_label.grid(row=0, column=0)
 
         self.probabilities_input = ttk.Entry(self.frame)
         self.probabilities_input.grid(row=1, column=0)
