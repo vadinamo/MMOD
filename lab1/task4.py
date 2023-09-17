@@ -1,16 +1,16 @@
 from tkinter import ttk
 
-from functions import simulate_event
+from functions import simulate_complex_event, create_complex_output
 
 
-class Task2:
+class Task4:
     def __init__(self, parent: ttk.Notebook):
         self.parent = parent
 
         self.frame = ttk.Frame(self.parent)
         self.frame.grid(row=1, column=0)
 
-        self.info_label = ttk.Label(self.frame, text='Insert events probabilities separated by ","')
+        self.info_label = ttk.Label(self.frame, text='Insert probabilities separated by ","')
         self.info_label.grid(row=0, column=0)
 
         self.probabilities_input = ttk.Entry(self.frame)
@@ -26,29 +26,26 @@ class Task2:
         self.result_label.grid(row=4, column=0)
 
     def draw(self):
-        self.parent.add(self.frame, text='Task 2')
+        self.parent.add(self.frame, text='Task 4')
 
     def calculate(self):
         self.error_label.config(text='')
-        self.error_label.config(text='')
+        self.result_label.config(text='')
         try:
-            count = 100_000
+            count = 1_000_000
 
             probabilities = [float(x) for x in self.probabilities_input.get().replace(' ', '').split(',')]
             if any(p < 0 or p > 1 for p in probabilities):
                 raise Exception("Probability values should be between 0 and 1")
+            if sum(probabilities) != 1:
+                raise Exception("Sum of probabilities must be 1")
 
-            output = []
-            for probability in probabilities:
-                success = 0
-                for i in range(0, count):
-                    if simulate_event(probability):
-                        success += 1
+            values = [i for i in range(len(probabilities))]
+            result = [0 for _ in range(len(probabilities))]
+            for i in range(count):
+                result[int(simulate_complex_event(values, probabilities))] += 1
 
-                output.append([probability, success / count])
-
-            self.result_label.config(
-                text='\n'.join([' '.join(map(str, item)) for item in output]))
+            self.result_label.config(text=create_complex_output(probabilities, result, count))
 
         except ValueError:
             self.error_label.config(text='Invalid values')

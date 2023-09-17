@@ -1,6 +1,6 @@
 from tkinter import ttk
 
-from functions import simulate_complex_event
+from functions import simulate_complex_event, create_complex_output
 
 
 class Task3:
@@ -35,6 +35,8 @@ class Task3:
         self.parent.add(self.frame, text='Task 3')
 
     def calculate(self):
+        self.error_label.config(text='')
+        self.error_label.config(text='')
         try:
             count = 1_000_000
 
@@ -52,12 +54,8 @@ class Task3:
             for i in range(count):
                 result[int(simulate_complex_event([0, 1, 2, 3], probabilities))] += 1
 
-            output = []
-            for i in range(len(probabilities)):
-                output.append([probabilities[i], result[i] / count])
-
             self.result_label.config(
-                text='\n'.join([' '.join(map(str, item)) for item in output]))
+                text=create_complex_output(probabilities, result, count))
 
         except ValueError:
             self.error_label.config(text='Invalid values')

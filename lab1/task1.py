@@ -30,6 +30,7 @@ class Task1:
 
     def calculate(self):
         self.error_label.config(text='')
+        self.result_label.config(text='')
         try:
             count = 1_000_000
 

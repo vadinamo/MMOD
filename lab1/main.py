@@ -4,6 +4,7 @@ from tkinter import ttk
 from task1 import Task1
 from task2 import Task2
 from task3 import Task3
+from task4 import Task4
 
 
 def main():
@@ -18,6 +19,8 @@ def main():
     task2.draw()
     task3 = Task3(tab_control)
     task3.draw()
+    task4 = Task4(tab_control)
+    task4.draw()
 
     tab_control.pack(expand=1, fill="both")
 
