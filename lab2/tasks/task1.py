@@ -4,6 +4,9 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from scipy.stats import chi
+
+iterations = 10_000
 
 
 class Task1:
@@ -51,6 +54,52 @@ class Task1:
         self.hist_canvas_widget = self.hist_canvas.get_tk_widget()
         self.hist_canvas_widget.grid(columnspan=2, row=3, column=0)
 
+        result_table_frame = ttk.Frame(self.result_frame)
+        result_table_frame.grid(columnspan=2, row=4, column=0)
+
+        confidence_interval_math_expectation_label = ttk.Label(result_table_frame,
+                                                               text='Confidence interval (math expectation)')
+        confidence_interval_math_expectation_label.grid(row=0, column=0)
+
+        self.confidence_interval_math_expectation_left_label = ttk.Label(result_table_frame)
+        self.confidence_interval_math_expectation_left_label.grid(row=0, column=1)
+
+        self.confidence_interval_math_expectation_right_label = ttk.Label(result_table_frame)
+        self.confidence_interval_math_expectation_right_label.grid(row=0, column=2)
+
+        confidence_interval_dispersion_label = ttk.Label(result_table_frame, text='Confidence interval (Dispersion)')
+        confidence_interval_dispersion_label.grid(row=1, column=0)
+
+        self.confidence_interval_dispersion_left_label = ttk.Label(result_table_frame)
+        self.confidence_interval_dispersion_left_label.grid(row=1, column=1)
+
+        self.confidence_interval_dispersion_right_label = ttk.Label(result_table_frame)
+        self.confidence_interval_dispersion_right_label.grid(row=1, column=2)
+
+        theoretical_label = ttk.Label(result_table_frame, text='Theoretical')
+        theoretical_label.grid(row=2, column=1)
+
+        practical_label = ttk.Label(result_table_frame, text='Practical')
+        practical_label.grid(row=2, column=2)
+
+        math_expectation_label = ttk.Label(result_table_frame, text='Mathematical expectation')
+        math_expectation_label.grid(row=3, column=0)
+
+        self.math_expectation_theoretical_label = ttk.Label(result_table_frame)
+        self.math_expectation_theoretical_label.grid(row=3, column=1)
+
+        self.math_expectation_practical_label = ttk.Label(result_table_frame)
+        self.math_expectation_practical_label.grid(row=3, column=2)
+
+        dispersion_label = ttk.Label(result_table_frame, text='Dispersion')
+        dispersion_label.grid(row=4, column=0)
+
+        self.dispersion_theoretical_label = ttk.Label(result_table_frame)
+        self.dispersion_theoretical_label.grid(row=4, column=1)
+
+        self.dispersion_practical_label = ttk.Label(result_table_frame)
+        self.dispersion_practical_label.grid(row=4, column=2)
+
         self.error_label = ttk.Label(self.frame)
         self.error_label.grid(columnspan=2, row=5, column=0)
 
@@ -69,11 +118,49 @@ class Task1:
     @staticmethod
     def _generate_numbers(f, y):
         result = []
-        for i in range(10_000):
+        for i in range(iterations):
             number = random.random()
             result.append(float(f.subs(y, number)))
 
         return result
+
+    @staticmethod
+    def _get_theoretical_math_expectation(f, x, a, b):
+        return float(sp.integrate(x * f, (x, a, b)))
+
+    @staticmethod
+    def _get_practical_math_expectation(result):
+        return sum(result) / len(result)
+
+    @staticmethod
+    def _get_theoretical_dispersion(f, x, a, b):
+        return float(sp.integrate(x ** 2 * f, (x, a, b))) - Task1._get_theoretical_math_expectation(f, x, a, b) ** 2
+
+    @staticmethod
+    def _get_practical_dispersion(result):
+        s = 0
+        math_expression = Task1._get_practical_math_expectation(result)
+        for element in result:
+            s += (element - math_expression) ** 2
+        return s / (len(result) - 1)
+
+    @staticmethod
+    def _get_math_expectation_confidence_interval(result):
+        t = 1.96
+        math_exp = Task1._get_practical_math_expectation(result)
+        dispersion = Task1._get_practical_dispersion(result)
+        delta = t * (dispersion ** 0.5) / (iterations ** 0.5)
+        return math_exp - delta, math_exp + delta
+
+    @staticmethod
+    def _get_dispersion_confidence_interval(result, confidence_level):
+        standard_deviation = np.sqrt(Task1._get_practical_dispersion(result))
+        alpha1 = (1 - confidence_level) / 2
+        alpha2 = (1 + confidence_level) / 2
+        chi1 = chi.ppf(alpha1, iterations - 1)
+        chi2 = chi.ppf(alpha2, iterations - 1)
+        return (iterations - 1) * (standard_deviation ** 2) / (chi2 ** 2), (iterations - 1) * (
+                standard_deviation ** 2) / (chi1 ** 2)
 
     def calculate(self):
         try:
@@ -91,6 +178,22 @@ class Task1:
             self.ax.clear()
             self.ax.hist(result, color='blue')
             self.hist_canvas.draw()
+
+            df = sp.diff(f, x)
+
+            self.math_expectation_theoretical_label.config(text=self._get_theoretical_math_expectation(df, x, a, b))
+            self.math_expectation_practical_label.config(text=self._get_practical_math_expectation(result))
+
+            self.dispersion_theoretical_label.config(text=self._get_theoretical_dispersion(df, x, a, b))
+            self.dispersion_practical_label.config(text=self._get_practical_dispersion(result))
+
+            math_expectation_confidence_interval = self._get_math_expectation_confidence_interval(result)
+            self.confidence_interval_math_expectation_left_label.config(text=math_expectation_confidence_interval[0])
+            self.confidence_interval_math_expectation_right_label.config(text=math_expectation_confidence_interval[1])
+
+            dispersion_confidence_interval = self._get_dispersion_confidence_interval(result, 0.95)
+            self.confidence_interval_dispersion_left_label.config(text=dispersion_confidence_interval[0])
+            self.confidence_interval_dispersion_right_label.config(text=dispersion_confidence_interval[1])
         except ValueError:
             self.error_label.config(text='Invalid value')
         except Exception as e:
