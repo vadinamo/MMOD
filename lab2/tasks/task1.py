@@ -1,12 +1,9 @@
 import random
-import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from scipy.stats import chi
-
-iterations = 10_000
+from functions import *
 
 
 class Task1:
@@ -58,7 +55,7 @@ class Task1:
         result_table_frame.grid(columnspan=2, row=4, column=0)
 
         confidence_interval_math_expectation_label = ttk.Label(result_table_frame,
-                                                               text='Confidence interval (math expectation)')
+                                                               text='Confidence interval (Math expectation)')
         confidence_interval_math_expectation_label.grid(row=0, column=0)
 
         self.confidence_interval_math_expectation_left_label = ttk.Label(result_table_frame)
@@ -101,7 +98,7 @@ class Task1:
         self.dispersion_practical_label.grid(row=4, column=2)
 
         self.error_label = ttk.Label(self.frame)
-        self.error_label.grid(columnspan=2, row=5, column=0)
+        self.error_label.grid(columnspan=2, row=4, column=0)
 
     def draw(self):
         self.parent.add(self.frame, text='Task 1')
@@ -129,43 +126,16 @@ class Task1:
         return float(sp.integrate(x * f, (x, a, b)))
 
     @staticmethod
-    def _get_practical_math_expectation(result):
-        return sum(result) / len(result)
-
-    @staticmethod
     def _get_theoretical_dispersion(f, x, a, b):
         return float(sp.integrate(x ** 2 * f, (x, a, b))) - Task1._get_theoretical_math_expectation(f, x, a, b) ** 2
-
-    @staticmethod
-    def _get_practical_dispersion(result):
-        s = 0
-        math_expression = Task1._get_practical_math_expectation(result)
-        for element in result:
-            s += (element - math_expression) ** 2
-        return s / (len(result) - 1)
-
-    @staticmethod
-    def _get_math_expectation_confidence_interval(result):
-        t = 1.96
-        math_exp = Task1._get_practical_math_expectation(result)
-        dispersion = Task1._get_practical_dispersion(result)
-        delta = t * (dispersion ** 0.5) / (iterations ** 0.5)
-        return math_exp - delta, math_exp + delta
-
-    @staticmethod
-    def _get_dispersion_confidence_interval(result, confidence_level):
-        standard_deviation = np.sqrt(Task1._get_practical_dispersion(result))
-        alpha1 = (1 - confidence_level) / 2
-        alpha2 = (1 + confidence_level) / 2
-        chi1 = chi.ppf(alpha1, iterations - 1)
-        chi2 = chi.ppf(alpha2, iterations - 1)
-        return (iterations - 1) * (standard_deviation ** 2) / (chi2 ** 2), (iterations - 1) * (
-                standard_deviation ** 2) / (chi1 ** 2)
 
     def calculate(self):
         try:
             a = int(self.left_boundary_input.get())
             b = int(self.right_boundary_input.get())
+
+            if a > b:
+                raise Exception("Left boundary should be lower than right")
 
             x, y = sp.symbols("x y")
             f = sp.simplify(f'(x - {a}) / ({b} - {a})')
@@ -182,16 +152,16 @@ class Task1:
             df = sp.diff(f, x)
 
             self.math_expectation_theoretical_label.config(text=self._get_theoretical_math_expectation(df, x, a, b))
-            self.math_expectation_practical_label.config(text=self._get_practical_math_expectation(result))
+            self.math_expectation_practical_label.config(text=get_practical_math_expectation(result))
 
             self.dispersion_theoretical_label.config(text=self._get_theoretical_dispersion(df, x, a, b))
-            self.dispersion_practical_label.config(text=self._get_practical_dispersion(result))
+            self.dispersion_practical_label.config(text=get_practical_dispersion(result))
 
-            math_expectation_confidence_interval = self._get_math_expectation_confidence_interval(result)
+            math_expectation_confidence_interval = get_math_expectation_confidence_interval(result)
             self.confidence_interval_math_expectation_left_label.config(text=math_expectation_confidence_interval[0])
             self.confidence_interval_math_expectation_right_label.config(text=math_expectation_confidence_interval[1])
 
-            dispersion_confidence_interval = self._get_dispersion_confidence_interval(result, 0.95)
+            dispersion_confidence_interval = get_dispersion_confidence_interval(result, 0.95)
             self.confidence_interval_dispersion_left_label.config(text=dispersion_confidence_interval[0])
             self.confidence_interval_dispersion_right_label.config(text=dispersion_confidence_interval[1])
         except ValueError:
