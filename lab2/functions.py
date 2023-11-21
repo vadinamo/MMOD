@@ -9,11 +9,8 @@ def get_practical_math_expectation(values):
 
 
 def get_practical_dispersion(values):
-    s = 0
     math_expression = get_practical_math_expectation(values)
-    for element in values:
-        s += (element - math_expression) ** 2
-    return s / (len(values) - 1)
+    return sum((element - math_expression) ** 2 for element in values) / (len(values) - 1)
 
 
 def get_math_expectation_confidence_interval(result):

@@ -136,7 +136,7 @@ class Task2:
                 raise Exception('p should be between 0 and 1')
 
             if x < 0 or x > n:
-                raise Exception('x should be between 0 and n value')
+                raise Exception(f'x should be between 0 and {n}(n value)')
 
             r = list(range(1, n))
             values = [Task2.probability_function(i, x, p) for i in r]

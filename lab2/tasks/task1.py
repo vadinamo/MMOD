@@ -118,6 +118,7 @@ class Task1:
         result = []
         for i in range(iterations):
             number = random.random()
+            print(number)
             result.append(float(f.subs(y, number)))
 
         return result
