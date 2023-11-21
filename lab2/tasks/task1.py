@@ -47,6 +47,7 @@ class Task1:
         hist_label.grid(columnspan=2, row=2, column=0)
 
         self.fig, self.ax = plt.subplots()
+        self.fig.set_size_inches(6, 4)
         self.hist_canvas = FigureCanvasTkAgg(self.fig, master=self.result_frame)
         self.hist_canvas_widget = self.hist_canvas.get_tk_widget()
         self.hist_canvas_widget.grid(columnspan=2, row=3, column=0)
