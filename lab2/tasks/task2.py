@@ -124,7 +124,8 @@ class Task2:
         return x * (1 - p) / (p ** 2)
 
     def calculate(self):
-        try:  # 50 0.4 20
+        self.error_label.config(text='')
+        try:  # 15 0.4 2
             n = int(self.n_input.get())
             p = float(self.p_input.get())
             x = int(self.x_input.get())
@@ -138,7 +139,7 @@ class Task2:
             if x < 0 or x > n:
                 raise Exception(f'x should be between 0 and {n}(n value)')
 
-            r = list(range(1, n))
+            r = list(range(1, n + 1))
             values = [Task2.probability_function(i, x, p) for i in r]
 
             self.ax.clear()

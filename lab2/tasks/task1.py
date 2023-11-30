@@ -118,7 +118,6 @@ class Task1:
         result = []
         for i in range(iterations):
             number = random.random()
-            print(number)
             result.append(float(f.subs(y, number)))
 
         return result
@@ -132,6 +131,7 @@ class Task1:
         return float(sp.integrate(x ** 2 * f, (x, a, b))) - Task1._get_theoretical_math_expectation(f, x, a, b) ** 2
 
     def calculate(self):
+        self.error_label.config(text='')
         try:
             a = int(self.left_boundary_input.get())
             b = int(self.right_boundary_input.get())
